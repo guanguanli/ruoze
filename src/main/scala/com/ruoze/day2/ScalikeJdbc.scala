@@ -1,4 +1,4 @@
-package com.ruoze.day1
+package com.ruoze.day2
 
 
 import scalikejdbc.DB
