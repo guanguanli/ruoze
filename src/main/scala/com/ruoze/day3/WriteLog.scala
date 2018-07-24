@@ -2,7 +2,7 @@ package com.ruoze.day3
 
 import java.io.{File, PrintWriter}
 
-object Writetxt {
+object WriteLog {
 
 
   def main(args: Array[String]): Unit = {

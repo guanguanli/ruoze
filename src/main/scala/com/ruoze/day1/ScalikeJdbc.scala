@@ -1,17 +1,21 @@
 package com.ruoze.day1
 
-import scalikejdbc._
-import scalikejdbc.config._
 
+import scalikejdbc.DB
+import scalikejdbc.SQL
 
-object jdbc {
+object ScalikeJdbc {
+
 
   case class User(id:Int,name:String,age:Int)
 
   def main(args: Array[String]): Unit = {
 
+    //解析配置文件
+    scalikejdbc.config.DBs.setupAll()
+
     DB autoCommit { implicit session =>
-      sql"create table user ( id int(20) not null AUTO_INCREMENT, name varchar(10), age INT(3),  primary key (id))".execute.apply()
+      SQL("create table user ( id int(20) not null AUTO_INCREMENT, name varchar(10), age INT(3),  primary key (id))").execute.apply()
     }
 
     insertBatch("zhangsan",11)
@@ -22,7 +26,7 @@ object jdbc {
 
   //在数据插入的时候建立一个事务。
   def insertBatch( name: String, age : Int) =
-    DB.localx { implicit session =>
+    DB.localTx { implicit session =>
     SQL("insert into user(name,age) values(?,?)").bind(name, age).update().apply()
   }
 
@@ -44,11 +48,12 @@ object jdbc {
   //select查询到数据之后会产生一个rs的对象集，然后可以得到这个对象集里面的数据。
   def select() = {
     DB.readOnly { implicit session =>
-      SQL("select * from user").map(rs => User(rs.string("name"), rs.int("age"))).list().apply()
+      SQL("select * from user").map(rs => User(rs.int("id"),rs.string("name"), rs.int("age"))).list().apply()
     }
   }
 
 
-}
+
+  }
 
 
